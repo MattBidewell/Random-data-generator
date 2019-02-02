@@ -5,6 +5,7 @@
 
 import sys
 import csv
+import json
 import random
 
 FILE_NAME="dummy-data.csv"
@@ -13,7 +14,7 @@ ARGS=sys.argv
 
 def start(noOfLines):
     file = open(FILE_NAME, ("w+"))
-    file.write("username,password,email,firstname,lastname,age\r\n")
+    file.write("username,password,email,age\r\n")
 
     for i in range (0, noOfLines):
         data = generateData()
@@ -22,11 +23,12 @@ def start(noOfLines):
     file.close()
 
 def generateData():
-    username = generateUsername()
+    name = generateName()
+    username = generateUsername(name)
     password = generatePassword()
-    email = generateEmail()
+    email = generateEmail(name)
     age = generateAge()
-    return "matt1402," + password + ",matt@test.com," + age + "\r\n"
+    return username + "," + password + "," + email + "," + age + "\r\n"
 
 
 def generatePassword():
@@ -39,11 +41,26 @@ def generatePassword():
 def generateAge():
     return str(random.randint(18,55))
 
-def generateUsername():
-    return "test"
+def generateUsername(name):
+    randomInt = random.randint(0,9999)
+    return name + str(randomInt)
 
-def generateEmail():
-    return "test@test.com"
+def generateEmail(name):
+    emailDomains = readFile("domains.json")
+    emailProvidors = readFile("emailProviders.json")
+    randomInt = random.randint(0,100)
+    return name + str(randomInt) + "@" + emailProvidors[random.randint(0, len(emailProvidors) -1)] + emailDomains[random.randint(0, len(emailDomains) -1)]
+
+def generateName():
+    nameData = readFile("names.json")
+    return nameData[random.randint(0, len(nameData)-1)]
+
+def readFile(filename):
+    file = ""
+    with open("./datasets/" + filename, "r") as f:
+        for line in f:
+            file += line
+    return json.loads(file)
 
 if(len(ARGS) != 2):
     print("Invalid Arguments \r\n Correct use: \npython generateData 100")
