@@ -1,5 +1,5 @@
 
-# Dummy data generator
+# Random data generator
 
 Run `python generateData.py x`
 
